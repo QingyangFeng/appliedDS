@@ -1,0 +1,19 @@
+
+Compare similarity of two users
+Concatenate a couple of tweets posted by a user to form a short paragraph. 
+Repeat this for different users and we will get a paragraph for each user.
+Utilize natural language toolkit (NLTK) to find out distinct words in each paragraph and their frequency. During this process, paragraphs are transformed to bags of words.
+By bag of words in each paragraph, we can find similar tweets and users.
+
+Encoder and decoder
+When comparing two paragraph, it can be inefficient to compare the frequency of every word in these paragraphs.
+Thus we need an encoder that compresses a bag of words to a few integers. Then we can compare these integers instead of every word’s frequency. 
+These integers need to preserve the similarity between two bag of words. Therefore, it would be ideal if a corresponding decoder exists for our encoder which can recover the bag of words from these integers. (This could be against pigeonhole principle?) 
+This could be done by a hourglass-like neural network whose input is a bag of words. Its shape is like a hourglass because its input and output layers have many more nodes than middle layer. We can take a half of this neural network (between input layer and middle layer) as an encoder. Using the activation value (node output) of middle layer as integer summary of a bag of word. The rest half of neural network can be deemed as a decoder.
+
+Failed attempts
+Due to rate limits, getting friend list and following list of a user can be really difficult. Analysis of tweets content could be a better choice?
+
+Progress
+Maintain a list of tasks on Github so that everyone can pick up his favorite and keep track of progress.
+A web page is built with a search function (recommend celebrities for a user to follow) and expandable panel (call JS function to embed you page into this page as a panel).

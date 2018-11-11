@@ -1,0 +1,3 @@
+# Ignore files with extension `.bin` - this would be our model, which is 4gb
+*.bin
+*.bin

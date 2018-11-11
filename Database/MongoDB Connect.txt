@@ -1,0 +1,8 @@
+The MongoDB database is online. You can all access through the following: 
+
+IP Address: 129.150.114.173
+Port: 27017
+
+I have created a collection named Applied_Data_Science, which you can change its name if you want.
+
+Let me know if there are any issues.

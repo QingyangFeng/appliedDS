@@ -1,0 +1,19 @@
+This link is good start to our project. 
+http://hashtagify.me/hashtag/smm
+
+The features can be separated by two main blocks:
+  - your profile
+  - global information
+  
+Your profile involves:
+  - Get recommendations
+  - Top Influencers on your profile
+  - Tweet density retweets by week
+
+Global Information:
+  - Evolution of a topic (by hashtag): number of tweets per month, day, etc. Optional: Predict evolution of the topic
+  - Visualization of a topic on a map. Evolution like a network. See this http://helenjacksonanalytic.co.uk/EW_prop_price.html
+
+For the Model I could not make much research, but recommendations can be based on these features: tweet topic, followers, number of retweets of a topic.
+
+  

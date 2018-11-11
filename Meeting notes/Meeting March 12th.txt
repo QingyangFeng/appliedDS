@@ -1,0 +1,36 @@
+Applied Data Science 
+
+Meeting 12/03/2018    2-4pm     Room 0.03 MVB
+
+
+-Word2vec:
+
+Sentiment analysis
+Compare tweets in order to find who you could follow 
+
+
+-Recommending:
+
+What about diversity? Using the opposite? Weighting? 
+Topic classification: is it always obvious? 
+
+Ideas: 
+1) Blank page with search bar 
+2) visualisation: word cloud (for instance:   size: how popular, colour: sentiment) 
+
+
+
+
+PROBLEM: 
+-What kind of data do we have? 
+
+
+WORK THAT HAS TO BE DONE: 
+*Visualisation, Features of demo 	Jenish, Jeroen, Valentinas 
+*Model					Valentinas, Jenish, H
+*API					Anrdew, Sam 	
+*Storage (pre-processing) 		Sam, Jeroen 
+*Report 
+
+
+NEXT MEETING: MONDAY 19/03/2018

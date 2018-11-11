@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+		<!-- D3JS -->
+		<script src="../static/js/d3.min.js"></script>
+		<script src="../static/js/d3.layout.cloud.js"></script>
+		<script src="../static/js/cloudDrawingScript.js"></script>
+		
+		
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>       
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!--// icon loading css file -->
+	    <link href="../static/css/iconloading.css" type="text/css" rel="stylesheet"/>			
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	
+	
+        <!-- FIREBASE STUFF FOR LOGIN WITH TWITTER -->
+        <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+        <script type="text/javascript">
+        
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyCUjkIKo8SCdHX61B34Uv5W52rhqZHxtRY",
+                authDomain: "twitter-project-1ee64.firebaseapp.com",
+                databaseURL: "https://twitter-project-1ee64.firebaseio.com",
+                projectId: "twitter-project-1ee64",
+                storageBucket: "",
+                messagingSenderId: "275208377674"
+            };
+            firebase.initializeApp(config);
+
+            var token, secret, user;
+            var provider = new firebase.auth.TwitterAuthProvider();
+            function sign_in_popup(){
+                firebase.auth().signInWithPopup(provider).then(function(result) {
+                // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
+                // You can use these server side with your app's credentials to access the Twitter API.
+                token = result.credential.accessToken;
+                secret = result.credential.secret;
+                // The signed-in user info.
+                user = result.user;
+                console.log("successful login");
+                // ...
+                }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+                console.log("error when trying to log in");
+                console.log(error);
+                });
+            }
+
+        </script>
+
+
+      
+        <style>
+            /** 
+            some search bar styling has been created by @AustinAuth
+            from CodePen https://codepen.io/AustinAuth/ */
+
+            body{
+                padding-top: 75px;
+            }
+
+            .search-container{
+                width: 490px;
+                display: block;
+                margin: 0 auto;
+            }
+
+            #search-bar{
+                margin: 0 auto;
+                width: 100%;
+                height: 45px;
+                padding: 0 20px;
+                color: black;
+                font-size: 2em;
+                border: 1px solid #D0CFCE;
+                outline: none;
+                &:focus{
+                    border: 1px solid #008ABF;
+                    transition: 0.35s ease;
+                    color: #008ABF;
+                    &::-webkit-input-placeholder{
+                    transition: opacity 0.45s ease; 
+                    opacity: 0;
+                    }
+                    &::-moz-placeholder {
+                    transition: opacity 0.45s ease; 
+                    opacity: 0;
+                    }
+                    &:-ms-placeholder {
+                    transition: opacity 0.45s ease; 
+                    opacity: 0;
+                    }    
+                }
+            }
+
+            .search-icon{
+                position: relative;
+                float: right;
+                width: 75px;
+                height: 75px;
+                top: -62px;
+                /* right: -45px; */
+            }        
+            
+            
+        </style>
+
+
+        <title>Page Title</title>
+    </head>
+    <body>
+
+        <!-- <button onclick="sign_in_popup()">sign in with twitter</button> -->
+        <form id="search-form" class="search-container" onsubmit="getStats(); return false">
+            <input type="text" id="search-bar" name="search" placeholder="What can I help you with today?">
+            <a href=""><img class="search-icon" src="http://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png"></a>
+        </form>
+
+        
+        <div class=twitter-analytics></div>
+       
+        <!--more divs classes...-->
+        <div class=getSimilarProfiles></div>
+        <div class=drawWordCloud></div>
+        <div class=getUserSentiment></div>
+        <div class=getTopicModelling></div>
+        
+        
+        <script type="text/javascript">
+        
+        
+            var btn = document.querySelector('.search-icon');
+            btn.addEventListener('click', function (event){   
+                getStats();
+                event.preventDefault();
+            });
+                    
+            
+            // this is where we init values on search
+            function getStats(){
+                var searchData = [];
+                var username = '';
+        
+                var twitterAnalytics = document.querySelector('.twitter-analytics')
+                
+                var panelTemplate = `
+                    <div class="container">
+                        <h2>Twitter Analytics</h2>
+                        <div class="panel panel-default">
+                            <div class="panel-heading"></div>
+                            <div class="panel-body"></div>
+                        </div>
+                    </div> `
+                
+                twitterAnalytics.innerHTML = panelTemplate;
+                
+                console.log("Getting stats. . .");
+
+                // get data
+                var data = $('#search-form').serializeArray();
+                
+                // process each parameter of the form . . .
+                data.forEach(function(element) {
+                    console.log(element);
+                    searchData[element.name] = element.value;
+
+                    // do something if user enters username with spaces or something of that kind...  
+                });
+                
+                // at this point we can assign the values . . .
+                username = searchData['search']
+                
+                // This is where we make api calls
+                getUserSentiment(username);
+                getSimilarProfiles(username);
+                drawWordCloud(username);
+                getTopicModelling();
+            }
+        
+
+            // https://stackoverflow.com/questions/247483/http-get-request-in-javascript
+            function httpGet(theUrl)
+            {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+                xmlHttp.send( null );
+                return xmlHttp.responseText;
+            }
+            // if possible, better user Async
+            function httpGetAsync(theUrl, callback)
+            {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.onreadystatechange = function() { 
+                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                        callback(xmlHttp.responseText);
+                }
+                xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+                xmlHttp.send(null);
+            }
+
+            function getUserSentiment(username) {
+                
+    		    var data = JSON.stringify({'username': username}); 
+                var load = document.querySelector('.getUserSentiment');
+                load.innerHTML = `
+                <h3>Rendering User Sentiment...</h3>
+                <div class="thecube">
+            		<div class="cube c1"></div>
+            		<div class="cube c2"></div>
+            		<div class="cube c4"></div>
+            		<div class="cube c3"></div>
+    		    </div>`;
+    		    
+                $.post('getUserSentiment', data, function(responseText) {
+                    
+                    // stop link reloading the page
+                    console.log(responseText);
+                    
+                    reponseJson = JSON.parse(responseText);
+                    var content = '<b>Sentiment of your last 10 tweet interactions: </b>' + responseText;
+                    var title = 'User sentiment';
+                    createPanel(title, content);
+                    load.innerHTML = "";
+                });
+                // stop link reloading the page
+                // event.preventDefault();
+                
+                // httpGetAsync(window.location.href+'getUserSentiment/'+username, function(responseText){
+                    // console.log(responseText);
+                    // reponseJson = JSON.parse(responseText);
+                    // var content = '<b>Sentiment of your last 10 tweet interactions: </b>' + responseText;
+                    // var title = 'User sentiment';
+                    // createPanel(title, content);
+                // }); 
+            }            
+
+            function getSimilarProfiles(username) {
+                var load = document.querySelector('.getSimilarProfiles');
+                load.innerHTML = `
+                <h3>Rendering Similar Profiles...</h3>
+                <div class="thecube">
+            		<div class="cube c1"></div>
+            		<div class="cube c2"></div>
+            		<div class="cube c4"></div>
+            		<div class="cube c3"></div>
+    		    </div>`;
+                httpGetAsync(window.location.href+'similar/'+username, function(responseText){
+                    console.log(responseText);
+
+                    // https://twitter.com/[screen_name]/profile_image?size=original
+                    usernames = JSON.parse(responseText);
+                    var htmlText = ''
+                    usernames.forEach(function(username) {
+                        htmlText += '<li><img src="https://twitter.com/'+username+'/profile_image?size=original" class="img-circle" width="100px"/></li>';
+
+                    });
+                    var content = '<ol>' + htmlText + '</ol>';
+                    var title = 'Most similar profiles';
+                    createPanel(title, content);
+                    load.innerHTML = "";
+                });    
+            }
+            
+            function getTopicModelling() {
+            
+            var load = document.querySelector('.getTopicModelling');
+            load.innerHTML = `
+            <h3>Rendering Topic Modelling...</h3>
+            <div class="thecube">
+        		<div class="cube c1"></div>
+        		<div class="cube c2"></div>
+        		<div class="cube c4"></div>
+        		<div class="cube c3"></div>
+		    </div>`;
+                httpGetAsync(window.location.href+'getTopicModelling', function(response){
+                    var htmlText = response;
+                    var content = htmlText;
+                    var title = 'Topic Modelling';
+                    createPanel(title, content);
+                    load.innerHTML = "";
+                });
+            }
+
+            function drawWordCloud(username) {
+                
+                var data = JSON.stringify({'username': username}); 
+                var load = document.querySelector('.drawWordCloud');
+                load.innerHTML = `
+                <h3>Rendering Word Cloud for user timeline...</h3>
+                <div class="thecube">
+            		<div class="cube c1"></div>
+            		<div class="cube c2"></div>
+            		<div class="cube c4"></div>
+            		<div class="cube c3"></div>
+    		    </div>`;
+    		    
+                $.post('getMessages', data, function(responseText) {
+                    
+                    // var content = '<b>Word Cloud of Twitter user timeline </b>' + responseText;
+                    // var title = 'Word Cloud';
+                    var tweets = JSON.parse(responseText);
+                    var tweetsAsOneString = tweets.join(' ');
+                    var singleWordsArray = tweetsAsOneString.split(' ');
+                    createWordCloud(singleWordsArray);
+                    load.innerHTML = "";
+                });
+                // httpGetAsync(window.location.href+'getMessages/'+username, function(responseText){
+                //     console.log(responseText);
+
+                //     // https://twitter.com/[screen_name]/profile_image?size=original
+                //     var tweets = JSON.parse(responseText);
+                //     var tweetsAsOneString = tweets.join(' ');
+                //     var singleWordsArray = tweetsAsOneString.split(' ');
+                //     createWordCloud(singleWordsArray);
+                // });    
+            }
+
+            function createPanel(title, content){
+                // <div class="panel panel-default">
+                //     <div class="panel-heading">Similar profiles</div>
+                //     <div class="panel-body">Panel Content</div>
+                // </div>
+                
+                var div = document.createElement('div');
+                div.className = "panel panel-default";
+                
+                var divHead = document.createElement('div');
+                divHead.className = "panel-heading";
+                divHead.innerHTML = title;
+                
+                var divBody = document.createElement('div');
+                divBody.className = "panel-body";
+                divBody.innerHTML = content;
+
+                div.appendChild(divHead);
+                div.appendChild(divBody);
+                $(".container").append(div);
+            }
+
+        </script>
+
+    </body>
+
+</html>

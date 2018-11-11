@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+    <div class="container-fluid">
+   
+        <div class="row">
+        
+            <div class="col-10">
+                <form>
+                    <div class="form-group">
+                        <!---- character limit same as twitter twitter messages 140 ch limit> <!--->
+                        <label for="userInput1"> Screen name</label>
+                        <input type="text" class="form-control" id="userInput1" placeholder="enter the twitter screen name">
+                    </div>
+                    <div class="form-group">
+                        <!---- character limit same as twitter twitter messages 140 ch limit> <!--->
+                        <label for="userInput2"> Number of tweets (maximum 200)</label>
+                        <input type="text" class="form-control" id="userInput2" placeholder="enter the number of tweets wanted">
+                    </div>
+                    <button type="submit" class="btn btn-info">Lookup</button>
+                </form>
+            </div>
+        </div>
+        
+        <div id='twitterMessage'></div>
+    </div>
+    
+<script src="/static/js/index_.js"></script>
+   
+{% endblock %}
+

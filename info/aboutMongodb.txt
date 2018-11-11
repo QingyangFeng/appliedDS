@@ -1,0 +1,67 @@
+For set up mongodb first go to the main page download mongodb
+
+for the mac user:
+first extract the file
+
+tar -zxvf mongodb-osx-ssl-x86_64-3.6.3.tgz
+
+Copy the extracted folder to the location from which MongoDB will run
+
+mkdir -p mongodb
+cp -R -n mongodb-osx-ssl-x86_64-3.6.3/ mongodb
+
+Then enter the following sentence into the .bash_profile or .bashrc
+
+export PATH=<mongodb-install-directory>/bin:$PATH
+
+ps. you can find the .bash_profile by running ls -a on the default path when you open a new terminal (Basically is in here cd /User/you account user name/)
+
+after that you need to set up the default path for data storage
+sudo mkdir -p  /data/db
+
+or do it seperately
+sudo mkdir /data
+cd  /data
+mkdir data
+
+then you can run the mongodb by entering 
+
+mongod
+ps. if you set the db file in a specific place you will need to run mongod --dbpath  <the location of the data/db file>
+and open another terminal entering
+
+mongo
+
+
+for windows user:
+Just foller the step like the normal install
+but the default path for /data/db file is in the C:// on the windows
+
+here is the guide for windows and linux user  https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+
+some basic guide for mongo db
+https://www.tutorialspoint.com/mongodb/index.htm
+
+for pymongo（mongodb api） :
+here is the link of guide
+https://api.mongodb.com/python/current/tutorial.html
+
+run following command to install pymongo which is a python package to link the mongo db and you 
+pip instll pymongo
+
+we need to import MongoClient from pymongo
+from pymongo import MongoClient
+
+# The MongoDB connection info. This assumes your database name is TwitterStream, and your collection name is tweets.
+ client = MongoClient()
+ db = client.TwitterStream
+ collection = db.tweet
+
+ after finish to set up the things you want to save just run
+ collection.save(tweet)
+ to save the tweet into the database.
+
+ps. you need to creat the db and collection first before you running the code.
+
+for the sample you also need to install a package called tweepy 
+pip install tweepy
